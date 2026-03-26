@@ -58,14 +58,14 @@
                 <input type="password" id="passInput" placeholder="ŞİFRE" class="w-full px-6 py-4 rounded-2xl text-center font-bold tracking-[0.5em] bg-zinc-900 text-white border-none outline-none">
                 <button onclick="handleLogin()" class="w-full py-5 bg-hidYellow text-black font-black rounded-2xl hover:scale-[1.02] transition-all uppercase tracking-widest shadow-lg mt-2">Giriş Yap</button>
             </div>
-            <p class="text-zinc-600 text-xs mt-6">Admin veya Müşteri şifrenizi giriniz.</p>
+            <p class="text-zinc-600 text-xs mt-6">Admin veya Müşteri bilgilerinizi giriniz.</p>
         </div>
     </div>
 
     <div id="mainApp" class="hidden h-screen flex">
         
         <aside id="hw-sidebar" class="w-80 bg-white border-r border-slate-200 flex flex-col shadow-sm">
-            <div class="p-8 border-b border-slate-50">
+            <div class="p-8 border-b border-slate-50 flex-1 overflow-y-auto custom-scrollbar">
                 
                 <div class="mb-12 flex items-center justify-center">
                     <img src="HidWorks_LogoSiyah.png" alt="HidWorks Logo" class="h-12 w-auto">
@@ -73,13 +73,24 @@
 
                 <div class="flex items-center justify-between px-2 mb-4">
                     <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Markalar</p>
-                    <button onclick="addNewBrand()" class="w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center text-slate-500 hover:bg-hidYellow hover:text-black transition-all shadow-sm">
+                    <button onclick="addNewBrand()" class="w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center text-slate-500 hover:bg-hidYellow hover:text-black transition-all shadow-sm" title="Yeni Marka Ekle">
                         <i class="fas fa-plus text-[10px]"></i>
                     </button>
                 </div>
-                <div id="brandList" class="space-y-2 px-1"></div>
+                <div id="brandList" class="space-y-2 px-1 mb-8"></div>
+
+                <div class="pt-6 border-t border-slate-100">
+                    <div class="flex items-center justify-between px-2 mb-4">
+                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Adminler</p>
+                        <button onclick="addNewAdmin()" class="w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center text-slate-500 hover:bg-hidYellow hover:text-black transition-all shadow-sm" title="Yeni Admin Ekle">
+                            <i class="fas fa-user-plus text-[10px]"></i>
+                        </button>
+                    </div>
+                    <div id="adminList" class="space-y-2 px-1"></div>
+                </div>
             </div>
-            <div class="mt-auto p-8">
+
+            <div class="p-8 border-t border-slate-100 bg-white">
                 <button onclick="openAddModal()" class="w-full py-5 bg-slate-900 text-white font-black rounded-2xl hover:bg-hidYellow hover:text-black transition-all shadow-xl flex items-center justify-center gap-3">
                     <i class="fas fa-plus-circle text-lg"></i> YENİ İÇERİK EKLE
                 </button>
@@ -161,11 +172,14 @@
         let currentUserRole = ''; 
         let currentUserName = '';
         
-        // Veritabanı Mantığı (Local Storage) - Aylar hatasını düzelten yapı
         let state = JSON.parse(localStorage.getItem('hidworks_vFinal_Helin_Tecim'));
         
+        // İlk Kurulum (Veri yoksa oluştur)
         if (!state) {
             state = {
+                admins: [
+                    { username: 'helin', password: 'helin2004', name: 'Helin (Kurucu)' }
+                ],
                 months: ['Mart 2026', 'Nisan 2026'],
                 brands: [{ id: 1, name: 'İstifçi Urla', password: 'urla' }],
                 contents: [{
@@ -183,22 +197,31 @@
             };
         }
         
-        if(!state.months) {
-            state.months = ['Mart 2026', 'Nisan 2026'];
+        // Geriye dönük uyumluluk (Eskiden girmiş olanların verisini korumak için)
+        if(!state.months) state.months = ['Mart 2026', 'Nisan 2026'];
+        if(!state.admins) state.admins = [{ username: 'helin', password: 'helin2004', name: 'Helin (Kurucu)' }];
+
+        // Eski "admin" hesabını otomatik olarak "helin" ile güncelle
+        const mainAdminIndex = state.admins.findIndex(a => a.username === 'admin');
+        if(mainAdminIndex !== -1) {
+            state.admins[mainAdminIndex] = { username: 'helin', password: 'helin2004', name: 'Helin (Kurucu)' };
+            localStorage.setItem('hidworks_vFinal_Helin_Tecim', JSON.stringify(state));
         }
 
-        // GİRİŞ VE YETKİLENDİRME SİSTEMİ
+        // GİRİŞ KONTROLÜ
         function handleLogin() {
             const user = document.getElementById('userInput').value.trim();
             const pass = document.getElementById('passInput').value.trim();
             
-            // 1. Admin Girişi
-            if(user === 'admin' && pass === 'admin123') {
+            // 1. Admin Kontrolü
+            const matchedAdmin = state.admins.find(a => a.username === user && a.password === pass);
+            
+            if(matchedAdmin) {
                 currentUserRole = 'admin';
-                currentUserName = 'Helin (Admin)';
+                currentUserName = matchedAdmin.name;
                 startApp();
             } 
-            // 2. Müşteri Girişi
+            // 2. Müşteri Kontrolü
             else {
                 const brand = state.brands.find(b => b.password === pass);
                 if(brand) {
@@ -212,7 +235,6 @@
             }
         }
 
-        // ÇIKIŞ YAPMA SİSTEMİ
         function handleLogout() {
             currentUserRole = '';
             currentUserName = '';
@@ -223,15 +245,15 @@
             document.getElementById('loginScreen').style.display = 'flex';
         }
 
-        // UYGULAMAYI BAŞLAT
         function startApp() {
             document.getElementById('loginScreen').style.display = 'none';
             document.getElementById('mainApp').classList.remove('hidden');
             
             document.getElementById('user-display-name').innerText = currentUserName;
-            document.getElementById('role-text').innerText = currentUserRole === 'admin' ? 'Agency Admin' : 'Müşteri Yetkisi';
+            document.getElementById('role-text').innerText = currentUserRole === 'admin' ? 'Admin Yetkisi' : 'Müşteri Yetkisi';
             
             renderBrands();
+            renderAdmins();
             updateMonthSelects();
             
             if (currentUserRole === 'admin') {
@@ -245,7 +267,55 @@
             }
         }
 
-        // MARKALAR
+        // --- ADMİN YÖNETİMİ ---
+        function renderAdmins() {
+            const list = document.getElementById('adminList');
+            if(!list || currentUserRole !== 'admin') return;
+            
+            list.innerHTML = state.admins.map(a => `
+                <div class="flex items-center justify-between p-3 rounded-xl bg-slate-50 border border-slate-100 group">
+                    <div class="flex flex-col">
+                        <span class="text-[11px] font-bold text-slate-700">${a.name}</span>
+                        <span class="text-[9px] font-medium text-slate-400">@${a.username}</span>
+                    </div>
+                    ${a.username !== 'helin' ? `
+                    <button onclick="deleteAdmin('${a.username}')" class="text-slate-300 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-all" title="Admini Sil">
+                        <i class="fas fa-trash-alt"></i>
+                    </button>
+                    ` : '<i class="fas fa-shield-alt text-hidYellow" title="Ana Kurucu"></i>'}
+                </div>
+            `).join('');
+        }
+
+        function addNewAdmin() {
+            const name = prompt("Adminin Adı ve Soyadı:");
+            if(!name) return;
+            
+            const username = prompt("Sisteme giriş yapacağı 'Kullanıcı Adı' (Boşluksuz, örn: ahmet):");
+            if(!username) return;
+            
+            if(state.admins.find(a => a.username === username)) {
+                return alert("Bu kullanıcı adı zaten kullanılıyor!");
+            }
+            
+            const password = prompt("Sisteme giriş yapacağı 'Şifre':");
+            if(!password) return;
+
+            state.admins.push({ username, password, name });
+            saveState();
+            renderAdmins();
+            alert(`Admin başarıyla eklendi!\nKullanıcı Adı: ${username}\nŞifre: ${password}`);
+        }
+
+        function deleteAdmin(username) {
+            if(confirm(`'@${username}' adlı admini sistemden silmek istediğinize emin misiniz?`)) {
+                state.admins = state.admins.filter(a => a.username !== username);
+                saveState();
+                renderAdmins();
+            }
+        }
+
+        // --- MARKALAR ---
         function renderBrands() {
             const list = document.getElementById('brandList');
             list.innerHTML = state.brands.map(b => `
@@ -290,7 +360,7 @@
             }
         }
 
-        // AYLAR
+        // --- AYLAR ---
         function showMonthsView() {
             if(currentUserRole !== 'admin') return;
             hideAll(); document.getElementById('viewMonths').classList.remove('hidden');
@@ -348,16 +418,7 @@
         function deleteMonth(m) {
             if(confirm(`'${m}' ayını tamamen silmek istediğinize emin misiniz? (İçindeki içerikler de silinecektir!)`)) {
                 state.months = state.months.filter(x => x !== m);
-                state.contents = state.contents.filter(c => c.brandId !== id); // Düzeltme: Yanlış id kullanımı
-                saveState(); renderMonthCards(); updateMonthSelects();
-            }
-        }
-        
-        // Geriye dönük uyumluluk için fix (Eski dosyalarda state.contents.filter(c => c.brandId !== id) satırı vardı)
-        function deleteMonth(m) {
-            if(confirm(`'${m}' ayını tamamen silmek istediğinize emin misiniz? (İçindeki içerikler de silinecektir!)`)) {
-                state.months = state.months.filter(x => x !== m);
-                state.contents = state.contents.filter(c => c.month !== m); // Düzeltildi
+                state.contents = state.contents.filter(c => c.month !== m); 
                 saveState(); renderMonthCards(); updateMonthSelects();
             }
         }
@@ -367,7 +428,7 @@
             if(select) select.innerHTML = state.months.map(m => `<option value="${m}">${m}</option>`).join('');
         }
 
-        // AKIŞ VE DETAY GÖRÜNÜMÜ
+        // --- AKIŞ VE DETAY ---
         function showFlowView(month) {
             if(currentUserRole !== 'admin') return;
             hideAll(); document.getElementById('viewFlow').classList.remove('hidden');
@@ -422,7 +483,7 @@
             `).join('');
         }
 
-        // GRID GÖRÜNÜMÜ
+        // --- GRID ---
         function showGridView() {
             hideAll(); document.getElementById('viewGrid').classList.remove('hidden');
             if(currentUserRole === 'admin') {
@@ -450,7 +511,7 @@
             for(let i=filtered.length; i<12; i++) grid.innerHTML += `<div class="aspect-square bg-slate-50"></div>`;
         }
 
-        // YARDIMCI FONKSİYONLAR
+        // --- YARDIMCI FONKSİYONLAR ---
         function hideAll() {
             ['viewMonths', 'viewFlow', 'viewGrid'].forEach(v => document.getElementById(v).classList.add('hidden'));
             ['nav-months', 'nav-grid'].forEach(n => document.getElementById(n).classList.remove('text-slate-900', 'border-b-4', 'border-hidYellow'));

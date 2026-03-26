@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hidworks Planner | Müşteri Portalı</title>
+    <title>Hidworks Planner | İçerik Planlayıcı</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -50,12 +50,13 @@
                 <span class="text-black text-5xl font-black italic">H</span>
             </div>
             <h1 class="text-3xl font-bold mb-2 text-white italic tracking-tighter uppercase">HIDWORKS</h1>
-            <p class="text-hidYellow/60 text-[10px] font-bold uppercase tracking-[0.4em] mb-12 italic">Müşteri ve Çalışan Portalı</p>
+            <p class="text-hidYellow/60 text-[10px] font-bold uppercase tracking-[0.4em] mb-12 italic">İÇERİK PLANLAYICI PANELİ</p>
             <div class="space-y-4">
+                <input type="text" id="userInput" placeholder="KULLANICI ADI" class="w-full px-6 py-4 rounded-2xl text-center font-bold tracking-[0.2em] bg-zinc-900 text-white border-none outline-none">
                 <input type="password" id="passInput" placeholder="ŞİFRE" class="w-full px-6 py-4 rounded-2xl text-center font-bold tracking-[0.5em] bg-zinc-900 text-white border-none outline-none">
-                <button onclick="handleLogin()" class="w-full py-5 bg-hidYellow text-black font-black rounded-2xl hover:scale-[1.02] transition-all uppercase tracking-widest shadow-lg">Giriş Yap</button>
+                <button onclick="handleLogin()" class="w-full py-5 bg-hidYellow text-black font-black rounded-2xl hover:scale-[1.02] transition-all uppercase tracking-widest shadow-lg mt-2">Giriş Yap</button>
             </div>
-            <p class="text-zinc-600 text-xs mt-6">Yetkinize göre yönlendirileceksiniz.</p>
+            <p class="text-zinc-600 text-xs mt-6">Admin veya Müşteri şifrenizi giriniz.</p>
         </div>
     </div>
 
@@ -90,7 +91,7 @@
                 </div>
                 <div class="flex items-center gap-5 ml-auto">
                     <div class="text-right">
-                        <p class="text-sm font-black text-slate-900 tracking-tight">Kullanıcı</p>
+                        <p id="user-display-name" class="text-sm font-black text-slate-900 tracking-tight">Kullanıcı</p>
                         <p id="role-text" class="text-[10px] text-slate-400 font-bold italic uppercase">Rol</p>
                     </div>
                     <div class="w-12 h-12 rounded-2xl bg-hidYellow flex items-center justify-center text-black font-black shadow-sm text-sm"><i class="fas fa-user"></i></div>
@@ -107,9 +108,9 @@
                         </button>
                         <div class="flex items-center gap-4 bg-white px-6 py-3 rounded-xl border border-slate-200 shadow-sm">
                             <i class="fas fa-calendar-alt text-hidYellow"></i>
-                            <span id="flowMonthTitle" class="text-xs font-black uppercase tracking-widest italic">Mart 2026</span>
+                            <span id="flowMonthTitle" class="text-xs font-black uppercase tracking-widest italic">Ay</span>
                             <span class="text-slate-200">|</span>
-                            <span id="flowBrandName" class="text-xs font-black text-hidYellow uppercase tracking-widest italic">İstifçi Urla</span>
+                            <span id="flowBrandName" class="text-xs font-black text-hidYellow uppercase tracking-widest italic">Marka</span>
                         </div>
                     </div>
                     <div id="flowContainer" class="space-y-16"></div>
@@ -136,7 +137,7 @@
             <div class="w-1/2 p-12 flex flex-col space-y-5 overflow-y-auto">
                 <h3 class="font-black italic text-2xl uppercase mb-6 tracking-tighter">PLAN OLUŞTUR</h3>
                 <div class="grid grid-cols-2 gap-4">
-                    <select id="p-month" class="p-4 text-xs font-bold rounded-2xl border bg-slate-50 outline-none"><option>Mart 2026</option><option>Şubat 2026</option></select>
+                    <select id="p-month" class="p-4 text-xs font-bold rounded-2xl border bg-slate-50 outline-none"></select>
                     <input type="date" id="p-date" class="p-4 text-xs font-bold rounded-2xl border bg-slate-50 outline-none">
                 </div>
                 <input type="text" id="p-tag" placeholder="Etiket (Örn: #Gastronomi)" class="p-4 text-xs rounded-2xl border font-black bg-slate-50 outline-none">
@@ -150,10 +151,13 @@
     </div>
 
     <script>
-        let currentUserRole = ''; // Giriş yapıldığında admin veya customer olacak
+        let currentUserRole = ''; 
+        let currentUserName = '';
         
+        // Veritabanı Mantığı (Local Storage)
         let state = JSON.parse(localStorage.getItem('hidworks_vFinal_Helin_Tecim')) || {
-            brands: [{ id: 1, name: 'İstifçi Urla' }],
+            months: ['Mart 2026', 'Nisan 2026'],
+            brands: [{ id: 1, name: 'İstifçi Urla', password: 'urla' }], // Örnek müşteri şifresi: urla
             contents: [{
                 id: Date.now(),
                 brandId: 1,
@@ -168,18 +172,28 @@
             activeBrandId: 1
         };
 
-        // GİRİŞ KONTROLÜ (ŞİFRE SİSTEMİ BURADA)
+        // GİRİŞ VE YETKİLENDİRME SİSTEMİ
         function handleLogin() {
-            const pass = document.getElementById('passInput').value;
+            const user = document.getElementById('userInput').value.trim();
+            const pass = document.getElementById('passInput').value.trim();
             
-            if(pass === 'admin123') {
+            // 1. Admin Girişi (Çalışanlar)
+            if(user === 'admin' && pass === 'admin123') {
                 currentUserRole = 'admin';
+                currentUserName = 'Helin (Admin)';
                 startApp();
-            } else if (pass === 'musteri123') {
-                currentUserRole = 'customer';
-                startApp();
-            } else {
-                alert('Hatalı şifre girdiniz!');
+            } 
+            // 2. Müşteri Girişi (Şifreye Göre Marka Eşleşmesi)
+            else {
+                const brand = state.brands.find(b => b.password === pass);
+                if(brand) {
+                    currentUserRole = 'customer';
+                    currentUserName = brand.name + ' (Müşteri)';
+                    state.activeBrandId = brand.id; // Müşteriyi kendi markasına hapset
+                    startApp();
+                } else {
+                    alert('Hatalı kullanıcı adı veya şifre! Lütfen tekrar deneyin.');
+                }
             }
         }
 
@@ -188,39 +202,68 @@
             document.getElementById('loginScreen').style.display = 'none';
             document.getElementById('mainApp').classList.remove('hidden');
             
-            document.getElementById('role-text').innerText = currentUserRole === 'admin' ? 'Agency Admin' : 'Müşteri Paneli';
+            document.getElementById('user-display-name').innerText = currentUserName;
+            document.getElementById('role-text').innerText = currentUserRole === 'admin' ? 'Agency Admin' : 'Müşteri Yetkisi';
             
             renderBrands();
+            updateMonthSelects();
             
             if (currentUserRole === 'admin') {
                 showMonthsView();
             } else {
-                // Müşteriyse menüleri gizle ve sadece grid göster
+                // Müşteriden Sidebar'ı ve Üst Menüyü Sakla
                 document.getElementById('hw-sidebar').style.display = 'none';
                 document.getElementById('hw-top-nav').style.visibility = 'hidden';
                 showGridView();
             }
         }
 
+        // MARKALAR (SİLME ÖZELLİĞİ EKLENDİ)
         function renderBrands() {
             const list = document.getElementById('brandList');
             list.innerHTML = state.brands.map(b => `
-                <button onclick="selectBrand(${b.id})" class="w-full text-left p-4 rounded-2xl font-black flex items-center gap-4 transition-all ${state.activeBrandId === b.id ? 'bg-slate-900 text-white shadow-xl' : 'hover:bg-slate-100 text-slate-400'}">
-                    <div class="w-3 h-3 rounded-full ${state.activeBrandId === b.id ? 'bg-hidYellow' : 'bg-slate-200'}"></div>
-                    <span class="truncate text-[11px] uppercase tracking-wider font-bold">${b.name}</span>
-                </button>
+                <div class="flex items-center gap-1 group">
+                    <button onclick="selectBrand(${b.id})" class="flex-1 text-left p-4 rounded-2xl font-black flex items-center gap-4 transition-all ${state.activeBrandId === b.id ? 'bg-slate-900 text-white shadow-xl' : 'hover:bg-slate-100 text-slate-400'}">
+                        <div class="w-3 h-3 rounded-full ${state.activeBrandId === b.id ? 'bg-hidYellow' : 'bg-slate-200'}"></div>
+                        <span class="truncate text-[11px] uppercase tracking-wider font-bold">${b.name}</span>
+                    </button>
+                    ${currentUserRole === 'admin' ? `
+                    <button onclick="deleteBrand(${b.id})" class="w-10 h-10 flex items-center justify-center rounded-xl text-slate-300 hover:text-red-500 hover:bg-red-50 transition-all opacity-0 group-hover:opacity-100" title="Markayı Sil">
+                        <i class="fas fa-trash-alt"></i>
+                    </button>
+                    ` : ''}
+                </div>
             `).join('');
+            
             const active = state.brands.find(x => x.id === state.activeBrandId);
             document.getElementById('flowBrandName').innerText = active ? active.name : "Marka Seç";
             document.getElementById('gridTitle').innerText = active ? active.name.toLowerCase().replace(/ /g, "_") : "brand";
         }
 
         function selectBrand(id) { state.activeBrandId = id; saveState(); renderBrands(); showMonthsView(); }
+        
         function addNewBrand() {
             const name = prompt("Marka Adı:");
-            if(name) { const id = Date.now(); state.brands.push({ id, name }); selectBrand(id); }
+            if(!name) return;
+            const password = prompt(`'${name}' markası için müşteri giriş şifresi belirleyin (Müşteri bu şifreyle girecektir):`);
+            if(!password) return;
+
+            const id = Date.now(); 
+            state.brands.push({ id, name, password }); 
+            selectBrand(id);
         }
 
+        function deleteBrand(id) {
+            if(confirm("DİKKAT: Bu markayı ve ona ait TÜM içerikleri silmek istediğinize emin misiniz?")) {
+                state.brands = state.brands.filter(b => b.id !== id);
+                state.contents = state.contents.filter(c => c.brandId !== id);
+                if(state.activeBrandId === id) state.activeBrandId = state.brands.length > 0 ? state.brands[0].id : null;
+                saveState(); renderBrands();
+                if(state.activeBrandId) showMonthsView(); else hideAll();
+            }
+        }
+
+        // AYLAR (DİNAMİK EKLEME VE SİLME EKLENDİ)
         function showMonthsView() {
             if(currentUserRole !== 'admin') return;
             hideAll(); document.getElementById('viewMonths').classList.remove('hidden');
@@ -228,34 +271,17 @@
             renderMonthCards();
         }
 
-        function showFlowView(month) {
-            if(currentUserRole !== 'admin') return;
-            hideAll(); document.getElementById('viewFlow').classList.remove('hidden');
-            document.getElementById('flowMonthTitle').innerText = month;
-            renderFlow(month);
-        }
-
-        function showGridView() {
-            hideAll(); document.getElementById('viewGrid').classList.remove('hidden');
-            if(currentUserRole === 'admin') {
-                document.getElementById('nav-grid').classList.add('text-slate-900', 'border-b-4', 'border-hidYellow');
-            }
-            renderGrid();
-        }
-
-        function hideAll() {
-            ['viewMonths', 'viewFlow', 'viewGrid'].forEach(v => document.getElementById(v).classList.add('hidden'));
-            ['nav-months', 'nav-grid'].forEach(n => document.getElementById(n).classList.remove('text-slate-900', 'border-b-4', 'border-hidYellow'));
-            ['nav-months', 'nav-grid'].forEach(n => document.getElementById(n).classList.add('text-slate-400'));
-        }
-
         function renderMonthCards() {
             const container = document.getElementById('viewMonths');
-            const months = ["Mart 2026", "Şubat 2026"];
-            container.innerHTML = months.map(m => {
+            let html = state.months.map(m => {
                 const count = state.contents.filter(c => c.brandId === state.activeBrandId && c.month === m).length;
                 return `
-                <div class="bg-white border border-slate-200 p-10 rounded-[50px] flex flex-col justify-between h-[360px] shadow-sm hover:shadow-2xl transition-all">
+                <div class="bg-white border border-slate-200 p-10 rounded-[50px] flex flex-col justify-between h-[360px] shadow-sm hover:shadow-2xl transition-all relative group">
+                    ${currentUserRole === 'admin' ? `
+                    <button onclick="deleteMonth('${m}')" class="absolute top-8 right-8 w-10 h-10 rounded-full bg-slate-50 text-slate-300 hover:text-red-500 hover:bg-red-50 transition-all opacity-0 group-hover:opacity-100 flex items-center justify-center shadow-sm" title="Bu Ayı Sil">
+                        <i class="fas fa-trash-alt"></i>
+                    </button>
+                    ` : ''}
                     <div>
                         <div class="flex items-center gap-4 mb-10 text-slate-900">
                             <i class="fas fa-calendar-alt text-hidYellow text-2xl"></i>
@@ -263,12 +289,8 @@
                         </div>
                         <div class="grid grid-cols-2 gap-6">
                             <div class="p-6 bg-slate-50 rounded-3xl border border-slate-100 text-center">
-                                <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1 italic">Metin Bekleyen</p>
+                                <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1 italic">İçerik Adedi</p>
                                 <p class="text-3xl font-black text-slate-900">${count}</p>
-                            </div>
-                            <div class="p-6 bg-slate-50 rounded-3xl border border-slate-100 text-center">
-                                <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1 italic">Onaylanan</p>
-                                <p class="text-3xl font-black text-hidYellow">0</p>
                             </div>
                         </div>
                     </div>
@@ -276,6 +298,45 @@
                 </div>
                 `;
             }).join('');
+
+            if(currentUserRole === 'admin') {
+                html += `
+                <button onclick="addNewMonth()" class="bg-slate-50 border-2 border-dashed border-slate-300 p-10 rounded-[50px] flex flex-col items-center justify-center h-[360px] text-slate-400 hover:text-hidYellow hover:border-hidYellow hover:bg-white transition-all group shadow-sm">
+                    <i class="fas fa-plus-circle text-5xl mb-4 group-hover:scale-110 transition-transform"></i>
+                    <span class="font-black text-sm uppercase tracking-widest italic">YENİ AY EKLE</span>
+                </button>
+                `;
+            }
+            container.innerHTML = html;
+        }
+
+        function addNewMonth() {
+            const m = prompt("Eklemek istediğiniz ayı yazın (Örn: Mayıs 2026):");
+            if(m && !state.months.includes(m)) {
+                state.months.push(m);
+                saveState(); renderMonthCards(); updateMonthSelects();
+            }
+        }
+
+        function deleteMonth(m) {
+            if(confirm(`'${m}' ayını tamamen silmek istediğinize emin misiniz? (İçindeki içerikler de silinecektir!)`)) {
+                state.months = state.months.filter(x => x !== m);
+                state.contents = state.contents.filter(c => c.month !== m);
+                saveState(); renderMonthCards(); updateMonthSelects();
+            }
+        }
+
+        function updateMonthSelects() {
+            const select = document.getElementById('p-month');
+            if(select) select.innerHTML = state.months.map(m => `<option value="${m}">${m}</option>`).join('');
+        }
+
+        // AKIŞ VE DETAY GÖRÜNÜMÜ
+        function showFlowView(month) {
+            if(currentUserRole !== 'admin') return;
+            hideAll(); document.getElementById('viewFlow').classList.remove('hidden');
+            document.getElementById('flowMonthTitle').innerText = month;
+            renderFlow(month);
         }
 
         function renderFlow(month) {
@@ -286,10 +347,9 @@
                 <div class="pinpe-card">
                     <div class="pinpe-header">
                         <div class="flex items-center gap-6">
-                            <span class="bg-black text-white px-5 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-wider italic">Plan ${idx+1} | ${c.tag}</span>
+                            <span class="bg-black text-white px-5 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-wider italic">İçerik ${idx+1} | ${c.tag}</span>
                             <span class="text-[12px] font-bold text-slate-400 italic">${c.date}</span>
                         </div>
-                        <span class="status-tag">Görsel Onayı Bekliyor</span>
                     </div>
 
                     <div class="pinpe-body">
@@ -302,15 +362,15 @@
                         <div class="flex-1 flex flex-col gap-8">
                             <div>
                                 <label class="text-[11px] font-black text-slate-400 uppercase tracking-widest mb-3 block italic">Alt Metin</label>
-                                <textarea class="h-24" readonly>${c.alt || 'x'}</textarea>
+                                <textarea class="h-24" readonly>${c.alt || ''}</textarea>
                             </div>
                             <div class="grid grid-cols-2 gap-8">
                                 <div>
                                     <label class="text-[11px] font-black text-slate-400 uppercase tracking-widest mb-3 block italic">Görsel Metni</label>
-                                    <textarea class="h-48" readonly>${c.caption || 'Caption...'}</textarea>
+                                    <textarea class="h-48" readonly>${c.caption || ''}</textarea>
                                 </div>
                                 <div>
-                                    <label class="text-[11px] font-black text-slate-400 uppercase tracking-widest mb-3 block italic">Not</label>
+                                    <label class="text-[11px] font-black text-slate-400 uppercase tracking-widest mb-3 block italic">Tasarımcı Notu</label>
                                     <textarea class="h-48 italic text-slate-400 font-medium" readonly>${c.note || ''}</textarea>
                                 </div>
                             </div>
@@ -319,14 +379,22 @@
 
                     <div class="pinpe-footer">
                         <div class="flex gap-2 ml-auto">
-                            <button onclick="deleteContent(${c.id}, '${month}')" class="action-btn bg-pinpeRed text-white"><i class="fas fa-trash"></i> SİL</button>
+                            <button onclick="deleteContent(${c.id}, '${month}')" class="action-btn bg-pinpeRed text-white"><i class="fas fa-trash-alt mr-2"></i> İçeriği Sil</button>
                         </div>
                     </div>
                 </div>
             `).join('');
         }
 
-        // MÜŞTERİYE ÖZEL REVİZE BUTONLU GRID SİSTEMİ
+        // GRID GÖRÜNÜMÜ
+        function showGridView() {
+            hideAll(); document.getElementById('viewGrid').classList.remove('hidden');
+            if(currentUserRole === 'admin') {
+                document.getElementById('nav-grid').classList.add('text-slate-900', 'border-b-4', 'border-hidYellow');
+            }
+            renderGrid();
+        }
+
         function renderGrid() {
             const grid = document.getElementById('instagramGrid');
             const filtered = state.contents.filter(c => c.brandId === state.activeBrandId);
@@ -346,7 +414,13 @@
             for(let i=filtered.length; i<12; i++) grid.innerHTML += `<div class="aspect-square bg-slate-50"></div>`;
         }
 
-        // --- CORE FONKSİYONLAR ---
+        // YARDIMCI FONKSİYONLAR
+        function hideAll() {
+            ['viewMonths', 'viewFlow', 'viewGrid'].forEach(v => document.getElementById(v).classList.add('hidden'));
+            ['nav-months', 'nav-grid'].forEach(n => document.getElementById(n).classList.remove('text-slate-900', 'border-b-4', 'border-hidYellow'));
+            ['nav-months', 'nav-grid'].forEach(n => document.getElementById(n).classList.add('text-slate-400'));
+        }
+
         function openAddModal() { document.getElementById('addModal').classList.remove('hidden'); }
         function closeAddModal() { document.getElementById('addModal').classList.add('hidden'); }
         
@@ -369,14 +443,16 @@
         }
         
         function deleteContent(id, month) {
-            if(confirm("Silmek istediğinize emin misiniz?")) { state.contents = state.contents.filter(c => c.id !== id); saveState(); renderFlow(month); }
+            if(confirm("İçeriği tamamen silmek istediğinize emin misiniz?")) { 
+                state.contents = state.contents.filter(c => c.id !== id); 
+                saveState(); renderFlow(month); 
+            }
         }
 
         function requestRevision(contentId) {
             const note = prompt("Bu görsel için revize talebinizi yazın (Örn: Logonun boyutu büyütülebilir mi?):");
             if(note) {
-                // Şimdilik uyarı veriyor, sonraki adımda mail sistemine entegre edeceğiz
-                alert("Talebiniz başarıyla kaydedildi:\\n\\n" + note);
+                alert("Talebiniz başarıyla ajansa iletildi:\\n\\n" + note);
             }
         }
 

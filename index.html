@@ -27,45 +27,53 @@
     </script>
     <style>
         body { font-family: 'Inter', sans-serif; background-color: #f1f5f9; }
-        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; height: 4px; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background: #FFD700; border-radius: 10px; }
         .login-screen { background: radial-gradient(circle at center, rgba(255,215,0,0.15) 0%, #000 100%); }
         
-        .pinpe-card { background: white; border-radius: 16px; border: 1px solid #e2e8f0; margin-bottom: 3rem; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05); }
-        .pinpe-header { padding: 16px 24px; border-bottom: 1px solid #f1f5f9; display: flex; justify-content: space-between; align-items: center; }
-        .pinpe-body { padding: 24px; display: flex; gap: 32px; }
-        .pinpe-footer { padding: 16px 24px; border-top: 1px solid #f1f5f9; display: flex; justify-content: space-between; align-items: center; background: #fff; border-radius: 0 0 16px 16px; }
+        .pinpe-card { background: white; border-radius: 16px; border: 1px solid #e2e8f0; margin-bottom: 2rem; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05); }
+        .pinpe-header { padding: 12px 16px; border-bottom: 1px solid #f1f5f9; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;}
+        .pinpe-body { padding: 16px; display: flex; flex-direction: column; gap: 24px; }
+        .pinpe-footer { padding: 12px 16px; border-top: 1px solid #f1f5f9; display: flex; justify-content: space-between; align-items: center; background: #fff; border-radius: 0 0 16px 16px; flex-wrap: wrap; gap: 8px;}
+        
+        @media (min-width: 768px) {
+            .pinpe-header { padding: 16px 24px; }
+            .pinpe-body { padding: 24px; flex-direction: row; gap: 32px; }
+            .pinpe-footer { padding: 16px 24px; }
+        }
         
         textarea { width: 100%; border-radius: 12px; border: 1px solid #e2e8f0; padding: 14px; font-size: 13px; background: #f8fafc; outline: none; transition: all 0.2s; resize: none; }
         textarea:focus { border-color: #FFD700; background: #fff; }
         .action-btn { padding: 10px 18px; border-radius: 10px; font-weight: 700; font-size: 11px; color: white; transition: 0.2s; text-transform: uppercase; }
-        .status-tag { background: #fff7ed; color: #c2410c; padding: 4px 14px; border-radius: 99px; font-size: 11px; font-weight: 800; border: 1px solid #ffedd5; }
     </style>
 </head>
 <body class="overflow-hidden">
 
-    <div id="loginScreen" class="fixed inset-0 z-[200] login-screen flex items-center justify-center p-6 bg-black">
-        <div class="bg-[#050505] p-12 rounded-[50px] w-full max-w-md shadow-[0_25px_50px_-12px_rgba(0,0,0,0.5)] text-center border border-white/10 relative">
-            <div class="p-4 bg-white/90 rounded-3xl mx-auto mb-10 inline-block shadow-[0_0_60px_rgba(255,215,0,0.3)]">
-                <img src="HidWorks_LogoSiyah.png" alt="HidWorks Logo" class="h-16 w-auto block">
+    <div id="loginScreen" class="fixed inset-0 z-[200] login-screen flex items-center justify-center p-4 md:p-6 bg-black">
+        <div class="bg-[#050505] p-8 md:p-12 rounded-[30px] md:rounded-[50px] w-full max-w-md shadow-[0_25px_50px_-12px_rgba(0,0,0,0.5)] text-center border border-white/10 relative">
+            <div class="p-4 bg-white/90 rounded-2xl md:rounded-3xl mx-auto mb-8 md:mb-10 inline-block shadow-[0_0_60px_rgba(255,215,0,0.3)]">
+                <img src="HidWorks_LogoSiyah.png" alt="HidWorks Logo" class="h-12 md:h-16 w-auto block">
             </div>
-            <h1 class="text-3xl font-bold mb-2 text-white italic tracking-tighter uppercase">HIDWORKS</h1>
-            <p class="text-hidYellow/60 text-[10px] font-bold uppercase tracking-[0.4em] mb-12 italic">İÇERİK PLANLAYICI PANELİ</p>
+            <h1 class="text-2xl md:text-3xl font-bold mb-2 text-white italic tracking-tighter uppercase">HIDWORKS</h1>
+            <p class="text-hidYellow/60 text-[9px] md:text-[10px] font-bold uppercase tracking-[0.3em] md:tracking-[0.4em] mb-8 md:mb-12 italic">İÇERİK PLANLAYICI PANELİ</p>
             <div class="space-y-4">
-                <input type="text" id="userInput" placeholder="KULLANICI ADI" class="w-full px-6 py-4 rounded-2xl text-center font-bold tracking-[0.2em] bg-zinc-900 text-white border-none outline-none">
-                <input type="password" id="passInput" placeholder="ŞİFRE" class="w-full px-6 py-4 rounded-2xl text-center font-bold tracking-[0.5em] bg-zinc-900 text-white border-none outline-none">
-                <button onclick="handleLogin()" class="w-full py-5 bg-hidYellow text-black font-black rounded-2xl hover:scale-[1.02] transition-all uppercase tracking-widest shadow-lg mt-2">Giriş Yap</button>
+                <input type="text" id="userInput" placeholder="KULLANICI ADI" class="w-full px-4 md:px-6 py-4 rounded-xl md:rounded-2xl text-center font-bold tracking-widest md:tracking-[0.2em] bg-zinc-900 text-white border-none outline-none text-sm md:text-base">
+                <input type="password" id="passInput" placeholder="ŞİFRE" class="w-full px-4 md:px-6 py-4 rounded-xl md:rounded-2xl text-center font-bold tracking-[0.3em] md:tracking-[0.5em] bg-zinc-900 text-white border-none outline-none text-sm md:text-base">
+                <button onclick="handleLogin()" class="w-full py-4 md:py-5 bg-hidYellow text-black font-black rounded-xl md:rounded-2xl hover:scale-[1.02] transition-all uppercase tracking-widest shadow-lg mt-2 text-sm md:text-base">Giriş Yap</button>
             </div>
             <p class="text-zinc-600 text-xs mt-6">Admin veya Müşteri bilgilerinizi giriniz.</p>
         </div>
     </div>
 
-    <div id="mainApp" class="hidden h-screen flex">
+    <div id="sidebar-backdrop" onclick="toggleSidebar()" class="fixed inset-0 bg-slate-900/50 z-40 hidden md:hidden backdrop-blur-sm transition-opacity"></div>
+
+    <div id="mainApp" class="hidden h-screen flex relative">
         
-        <aside id="hw-sidebar" class="w-80 bg-white border-r border-slate-200 flex flex-col shadow-sm">
-            <div class="p-8 border-b border-slate-50 flex-1 overflow-y-auto custom-scrollbar">
-                <div class="mb-12 flex items-center justify-center">
-                    <img src="HidWorks_LogoSiyah.png" alt="HidWorks Logo" class="h-12 w-auto">
+        <aside id="hw-sidebar" class="w-72 md:w-80 bg-white border-r border-slate-200 flex flex-col shadow-sm fixed md:relative h-full z-50 transform -translate-x-full md:translate-x-0 transition-transform duration-300 ease-in-out">
+            <div class="p-6 md:p-8 border-b border-slate-50 flex-1 overflow-y-auto custom-scrollbar">
+                <div class="mb-10 flex items-center justify-between md:justify-center">
+                    <img src="HidWorks_LogoSiyah.png" alt="HidWorks Logo" class="h-10 md:h-12 w-auto">
+                    <button onclick="toggleSidebar()" class="md:hidden text-slate-400 hover:text-red-500 text-xl"><i class="fas fa-times"></i></button>
                 </div>
 
                 <div class="flex items-center justify-between px-2 mb-4">
@@ -87,25 +95,42 @@
                 </div>
             </div>
 
-            <div class="p-8 border-t border-slate-100 bg-white">
-                <button onclick="openAddModal()" class="w-full py-5 bg-slate-900 text-white font-black rounded-2xl hover:bg-hidYellow hover:text-black transition-all shadow-xl flex items-center justify-center gap-3">
-                    <i class="fas fa-plus-circle text-lg"></i> YENİ İÇERİK EKLE
+            <div class="p-6 md:p-8 border-t border-slate-100 bg-white">
+                <button onclick="openAddModal()" class="w-full py-4 md:py-5 bg-slate-900 text-white font-black rounded-xl md:rounded-2xl hover:bg-hidYellow hover:text-black transition-all shadow-xl flex items-center justify-center gap-3 text-sm md:text-base">
+                    <i class="fas fa-plus-circle text-lg"></i> İÇERİK EKLE
                 </button>
             </div>
         </aside>
 
-        <main class="flex-1 flex flex-col overflow-hidden bg-slate-50">
-            <header class="h-24 px-10 border-b border-slate-200 bg-white flex items-center justify-between shadow-sm z-10">
-                <div id="hw-top-nav" class="flex gap-12 h-full">
-                    <button id="nav-months" onclick="showMonthsView()" class="h-full font-black text-xs uppercase tracking-widest text-slate-900 border-b-4 border-hidYellow transition-all">Aylar</button>
-                    <button id="nav-grid" onclick="showGridView()" class="h-full font-bold text-xs uppercase tracking-widest text-slate-400 hover:text-hidYellow transition-all">Instagram Grid</button>
+        <main class="flex-1 flex flex-col overflow-hidden bg-slate-50 w-full">
+            <header class="h-auto md:h-24 px-4 md:px-10 py-3 md:py-0 border-b border-slate-200 bg-white flex flex-col md:flex-row md:items-center justify-between shadow-sm z-10 gap-3 md:gap-0">
+                
+                <div class="flex items-center justify-between w-full md:w-auto">
+                    <button onclick="toggleSidebar()" class="md:hidden w-10 h-10 bg-slate-50 rounded-xl text-slate-600 flex items-center justify-center border border-slate-100">
+                        <i class="fas fa-bars"></i>
+                    </button>
                     
-                    <button id="nav-revisions" onclick="showRevisionsView()" class="relative h-full font-bold text-xs uppercase tracking-widest text-slate-400 hover:text-hidYellow transition-all">
+                    <div class="flex items-center gap-3 md:hidden">
+                        <div class="text-right">
+                            <p id="user-display-name-mobile" class="text-xs font-black text-slate-900 tracking-tight">Kullanıcı</p>
+                        </div>
+                        <button onclick="handleLogout()" class="w-10 h-10 rounded-xl bg-red-50 text-red-500 flex items-center justify-center shadow-sm">
+                            <i class="fas fa-sign-out-alt"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div id="hw-top-nav" class="flex gap-6 md:gap-12 h-10 md:h-full overflow-x-auto custom-scrollbar whitespace-nowrap items-end md:items-center pb-1 md:pb-0">
+                    <button id="nav-months" onclick="showMonthsView()" class="h-full font-black text-xs uppercase tracking-widest text-slate-900 border-b-4 border-hidYellow transition-all pb-2 md:pb-0">Aylar</button>
+                    <button id="nav-grid" onclick="showGridView()" class="h-full font-bold text-xs uppercase tracking-widest text-slate-400 hover:text-hidYellow transition-all pb-2 md:pb-0">Instagram Grid</button>
+                    
+                    <button id="nav-revisions" onclick="showRevisionsView()" class="relative h-full font-bold text-xs uppercase tracking-widest text-slate-400 hover:text-hidYellow transition-all pb-2 md:pb-0 pr-4">
                         Revizeler
-                        <span id="rev-badge" class="absolute top-[35px] -right-4 bg-pinpeRed text-white text-[9px] font-black w-5 h-5 flex items-center justify-center rounded-full hidden shadow-md">0</span>
+                        <span id="rev-badge" class="absolute top-0 md:top-[35px] -right-2 md:-right-4 bg-pinpeRed text-white text-[9px] font-black w-4 h-4 md:w-5 md:h-5 flex items-center justify-center rounded-full hidden shadow-md">0</span>
                     </button>
                 </div>
-                <div class="flex items-center gap-4 ml-auto">
+
+                <div class="hidden md:flex items-center gap-4 ml-auto">
                     <div class="text-right mr-2">
                         <p id="user-display-name" class="text-sm font-black text-slate-900 tracking-tight">Kullanıcı</p>
                         <p id="role-text" class="text-[10px] text-slate-400 font-bold italic uppercase">Rol</p>
@@ -118,62 +143,62 @@
                 </div>
             </header>
 
-            <div id="mainContent" class="flex-1 overflow-y-auto p-12 custom-scrollbar">
+            <div id="mainContent" class="flex-1 overflow-y-auto p-4 md:p-12 custom-scrollbar">
                 
-                <div id="viewMonths" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10"></div>
+                <div id="viewMonths" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-10"></div>
 
-                <div id="viewFlow" class="hidden space-y-12 max-w-6xl mx-auto pb-24">
-                    <div class="flex items-center justify-between sticky top-0 bg-slate-50/95 backdrop-blur-md z-20 py-6 border-b border-slate-200 mb-8">
-                        <button onclick="showMonthsView()" class="text-xs font-black text-slate-500 hover:text-slate-900 transition-all flex items-center gap-3 bg-white px-5 py-3 rounded-xl shadow-sm border border-slate-200">
+                <div id="viewFlow" class="hidden space-y-8 md:space-y-12 max-w-6xl mx-auto pb-24">
+                    <div class="flex flex-col md:flex-row items-start md:items-center justify-between sticky top-0 bg-slate-50/95 backdrop-blur-md z-20 py-4 md:py-6 border-b border-slate-200 mb-4 md:mb-8 gap-4 md:gap-0">
+                        <button onclick="showMonthsView()" class="w-full md:w-auto text-xs font-black text-slate-500 hover:text-slate-900 transition-all flex items-center justify-center gap-3 bg-white px-5 py-3 rounded-xl shadow-sm border border-slate-200">
                             <i class="fas fa-arrow-left"></i> AYLARA GERİ DÖN
                         </button>
-                        <div class="flex items-center gap-4 bg-white px-6 py-3 rounded-xl border border-slate-200 shadow-sm">
+                        <div class="w-full md:w-auto flex items-center justify-center gap-4 bg-white px-6 py-3 rounded-xl border border-slate-200 shadow-sm">
                             <i class="fas fa-calendar-alt text-hidYellow"></i>
-                            <span id="flowMonthTitle" class="text-xs font-black uppercase tracking-widest italic">Ay</span>
+                            <span id="flowMonthTitle" class="text-xs font-black uppercase tracking-widest italic truncate">Ay</span>
                             <span class="text-slate-200">|</span>
-                            <span id="flowBrandName" class="text-xs font-black text-hidYellow uppercase tracking-widest italic">Marka</span>
+                            <span id="flowBrandName" class="text-xs font-black text-hidYellow uppercase tracking-widest italic truncate">Marka</span>
                         </div>
                     </div>
-                    <div id="flowContainer" class="space-y-16"></div>
+                    <div id="flowContainer" class="space-y-8 md:space-y-16"></div>
                 </div>
 
                 <div id="viewGrid" class="hidden flex flex-col items-center">
-                    <div class="w-[360px] h-[740px] bg-white border-[14px] border-slate-950 rounded-[60px] shadow-2xl overflow-hidden relative">
-                        <div class="p-6 border-b flex justify-between items-center bg-white sticky top-0 z-10"><span class="font-bold text-[11px] tracking-widest uppercase italic" id="gridTitle">istifci_urla</span><i class="fas fa-bars text-xs"></i></div>
-                        <div id="instagramGrid" class="grid grid-cols-3 gap-0.5 mt-3 px-0.5"></div>
+                    <div class="w-full max-w-[360px] md:w-[360px] h-auto md:h-[740px] aspect-[9/16] md:aspect-auto bg-white border-[8px] md:border-[14px] border-slate-950 rounded-[40px] md:rounded-[60px] shadow-2xl overflow-hidden relative">
+                        <div class="p-4 md:p-6 border-b flex justify-between items-center bg-white sticky top-0 z-10"><span class="font-bold text-[11px] tracking-widest uppercase italic truncate" id="gridTitle">istifci_urla</span><i class="fas fa-bars text-xs"></i></div>
+                        <div id="instagramGrid" class="grid grid-cols-3 gap-0.5 mt-2 md:mt-3 px-0.5 overflow-y-auto max-h-[calc(100%-60px)] custom-scrollbar"></div>
                     </div>
                 </div>
 
                 <div id="viewRevisions" class="hidden space-y-6 max-w-5xl mx-auto pb-24">
-                    <div class="flex items-center justify-between sticky top-0 bg-slate-50/95 backdrop-blur-md z-20 py-6 border-b border-slate-200 mb-8">
-                        <h2 class="text-2xl font-black italic uppercase text-slate-900"><i class="fas fa-comment-dots text-hidYellow mr-2"></i> Müşteri Revize İstekleri</h2>
+                    <div class="flex items-center justify-between sticky top-0 bg-slate-50/95 backdrop-blur-md z-20 py-4 md:py-6 border-b border-slate-200 mb-4 md:mb-8">
+                        <h2 class="text-xl md:text-2xl font-black italic uppercase text-slate-900"><i class="fas fa-comment-dots text-hidYellow mr-2"></i> Revize İstekleri</h2>
                     </div>
-                    <div id="revisionsContainer" class="grid grid-cols-1 md:grid-cols-2 gap-6"></div>
+                    <div id="revisionsContainer" class="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6"></div>
                 </div>
 
             </div>
         </main>
     </div>
 
-    <div id="addModal" class="fixed inset-0 z-[300] hidden bg-slate-900/90 flex items-center justify-center p-6 backdrop-blur-lg">
-        <div class="bg-white w-full max-w-4xl rounded-[40px] border border-white/20 overflow-hidden flex shadow-2xl max-h-[90vh]">
-            <div class="w-1/2 bg-slate-50 p-12 flex flex-col items-center justify-center border-r border-slate-200 relative group">
-                <i class="fas fa-cloud-upload-alt text-6xl text-slate-200 group-hover:text-hidYellow transition-all"></i>
-                <p class="mt-6 text-[11px] font-black text-slate-400 uppercase tracking-widest">Görsel Seç</p>
+    <div id="addModal" class="fixed inset-0 z-[300] hidden bg-slate-900/90 flex items-center justify-center p-4 md:p-6 backdrop-blur-lg">
+        <div class="bg-white w-full max-w-4xl rounded-[30px] md:rounded-[40px] border border-white/20 overflow-hidden flex flex-col md:flex-row shadow-2xl max-h-[95vh] md:max-h-[90vh]">
+            <div class="w-full md:w-1/2 h-48 md:h-auto bg-slate-50 p-6 md:p-12 flex flex-col items-center justify-center border-b md:border-b-0 md:border-r border-slate-200 relative group">
+                <i class="fas fa-cloud-upload-alt text-4xl md:text-6xl text-slate-200 group-hover:text-hidYellow transition-all"></i>
+                <p class="mt-4 md:mt-6 text-[10px] md:text-[11px] font-black text-slate-400 uppercase tracking-widest">Görsel Seç</p>
                 <input type="file" id="fileInput" accept="image/*" class="absolute inset-0 opacity-0 cursor-pointer">
                 <img id="imagePreview" class="absolute inset-0 w-full h-full object-cover hidden">
             </div>
-            <div class="w-1/2 p-12 flex flex-col space-y-5 overflow-y-auto">
-                <h3 class="font-black italic text-2xl uppercase mb-6 tracking-tighter">PLAN OLUŞTUR</h3>
-                <div class="grid grid-cols-2 gap-4">
-                    <select id="p-month" class="p-4 text-xs font-bold rounded-2xl border bg-slate-50 outline-none"></select>
-                    <input type="date" id="p-date" class="p-4 text-xs font-bold rounded-2xl border bg-slate-50 outline-none">
+            <div class="w-full md:w-1/2 p-6 md:p-12 flex flex-col space-y-4 md:space-y-5 overflow-y-auto">
+                <h3 class="font-black italic text-xl md:text-2xl uppercase mb-2 md:mb-6 tracking-tighter">PLAN OLUŞTUR</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <select id="p-month" class="p-4 text-xs font-bold rounded-xl md:rounded-2xl border bg-slate-50 outline-none"></select>
+                    <input type="date" id="p-date" class="p-4 text-xs font-bold rounded-xl md:rounded-2xl border bg-slate-50 outline-none">
                 </div>
-                <input type="text" id="p-tag" placeholder="Etiket (Örn: #Gastronomi)" class="p-4 text-xs rounded-2xl border font-black bg-slate-50 outline-none">
+                <input type="text" id="p-tag" placeholder="Etiket (Örn: #Gastronomi)" class="p-4 text-xs rounded-xl md:rounded-2xl border font-black bg-slate-50 outline-none">
                 <textarea id="p-alt" rows="2" placeholder="Alt Metin"></textarea>
                 <textarea id="p-caption" rows="3" placeholder="Görsel Metni"></textarea>
                 <textarea id="p-note" rows="2" placeholder="Tasarımcı Notu"></textarea>
-                <button onclick="saveContent()" class="w-full py-5 bg-hidYellow text-black font-black rounded-2xl shadow-xl hover:scale-[1.03] transition-all uppercase tracking-widest mt-4">PLANA EKLE</button>
+                <button onclick="saveContent()" class="w-full py-4 md:py-5 bg-hidYellow text-black font-black rounded-xl md:rounded-2xl shadow-xl hover:scale-[1.03] transition-all uppercase tracking-widest mt-2 md:mt-4 text-sm">PLANA EKLE</button>
                 <button onclick="closeAddModal()" class="text-xs font-bold text-slate-400 uppercase tracking-widest pt-2">İptal</button>
             </div>
         </div>
@@ -197,7 +222,7 @@
                     note: 'Görseldeki antika detayları vurgulayalım.',
                     image: 'https://images.unsplash.com/photo-1559339352-11d035aa65de?auto=format&fit=crop&q=80&w=1000'
                 }],
-                revisions: [], // YENİ: Revize listesi
+                revisions: [], 
                 activeBrandId: 1
             };
         }
@@ -205,12 +230,26 @@
         // Geriye dönük uyumluluk 
         if(!state.months) state.months = ['Mart 2026', 'Nisan 2026'];
         if(!state.admins) state.admins = [{ username: 'helin', password: 'helin2004', name: 'Helin (Kurucu)' }];
-        if(!state.revisions) state.revisions = []; // Revize dizisi yoksa oluştur
+        if(!state.revisions) state.revisions = []; 
 
         const mainAdminIndex = state.admins.findIndex(a => a.username === 'admin');
         if(mainAdminIndex !== -1) {
             state.admins[mainAdminIndex] = { username: 'helin', password: 'helin2004', name: 'Helin (Kurucu)' };
             saveState();
+        }
+
+        // --- MOBİL SİDEBAR KONTROLÜ ---
+        function toggleSidebar() {
+            const sidebar = document.getElementById('hw-sidebar');
+            const backdrop = document.getElementById('sidebar-backdrop');
+            
+            if(sidebar.classList.contains('-translate-x-full')) {
+                sidebar.classList.remove('-translate-x-full');
+                backdrop.classList.remove('hidden');
+            } else {
+                sidebar.classList.add('-translate-x-full');
+                backdrop.classList.add('hidden');
+            }
         }
 
         // GİRİŞ KONTROLÜ
@@ -249,7 +288,12 @@
             document.getElementById('mainApp').classList.remove('hidden');
             
             document.getElementById('user-display-name').innerText = currentUserName;
+            document.getElementById('user-display-name-mobile').innerText = currentUserName;
             document.getElementById('role-text').innerText = currentUserRole === 'admin' ? 'Admin Yetkisi' : 'Müşteri Yetkisi';
+            
+            // Mobil sidebar'ı gizle
+            document.getElementById('hw-sidebar').classList.add('-translate-x-full');
+            document.getElementById('sidebar-backdrop').classList.add('hidden');
             
             renderBrands(); renderAdmins(); updateMonthSelects(); updateRevisionBadge();
             
@@ -274,7 +318,7 @@
             list.innerHTML = state.admins.map(a => `
                 <div class="flex items-center justify-between p-3 rounded-xl bg-slate-50 border border-slate-100 group">
                     <div class="flex flex-col"><span class="text-[11px] font-bold text-slate-700">${a.name}</span><span class="text-[9px] font-medium text-slate-400">@${a.username}</span></div>
-                    ${a.username !== 'helin' ? `<button onclick="deleteAdmin('${a.username}')" class="text-slate-300 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-all" title="Admini Sil"><i class="fas fa-trash-alt"></i></button>` : '<i class="fas fa-shield-alt text-hidYellow" title="Ana Kurucu"></i>'}
+                    ${a.username !== 'helin' ? `<button onclick="deleteAdmin('${a.username}')" class="text-slate-300 hover:text-red-500 opacity-100 md:opacity-0 group-hover:opacity-100 transition-all" title="Admini Sil"><i class="fas fa-trash-alt"></i></button>` : '<i class="fas fa-shield-alt text-hidYellow" title="Ana Kurucu"></i>'}
                 </div>
             `).join('');
         }
@@ -299,9 +343,9 @@
             list.innerHTML = state.brands.map(b => `
                 <div class="flex items-center gap-1 group">
                     <button onclick="selectBrand(${b.id})" class="flex-1 text-left p-4 rounded-2xl font-black flex items-center gap-4 transition-all ${state.activeBrandId === b.id ? 'bg-slate-900 text-white shadow-xl' : 'hover:bg-slate-100 text-slate-400'}">
-                        <div class="w-3 h-3 rounded-full ${state.activeBrandId === b.id ? 'bg-hidYellow' : 'bg-slate-200'}"></div><span class="truncate text-[11px] uppercase tracking-wider font-bold">${b.name}</span>
+                        <div class="w-3 h-3 rounded-full flex-shrink-0 ${state.activeBrandId === b.id ? 'bg-hidYellow' : 'bg-slate-200'}"></div><span class="truncate text-[11px] uppercase tracking-wider font-bold">${b.name}</span>
                     </button>
-                    ${currentUserRole === 'admin' ? `<button onclick="deleteBrand(${b.id})" class="w-10 h-10 flex items-center justify-center rounded-xl text-slate-300 hover:text-red-500 hover:bg-red-50 transition-all opacity-0 group-hover:opacity-100" title="Markayı Sil"><i class="fas fa-trash-alt"></i></button>` : ''}
+                    ${currentUserRole === 'admin' ? `<button onclick="deleteBrand(${b.id})" class="w-10 h-10 flex-shrink-0 flex items-center justify-center rounded-xl text-slate-300 hover:text-red-500 hover:bg-red-50 transition-all opacity-100 md:opacity-0 group-hover:opacity-100" title="Markayı Sil"><i class="fas fa-trash-alt"></i></button>` : ''}
                 </div>
             `).join('');
             
@@ -310,7 +354,12 @@
             document.getElementById('gridTitle').innerText = active ? active.name.toLowerCase().replace(/ /g, "_") : "brand";
         }
 
-        function selectBrand(id) { state.activeBrandId = id; saveState(); renderBrands(); if(currentUserRole === 'admin') showMonthsView(); else showGridView(); }
+        function selectBrand(id) { 
+            state.activeBrandId = id; saveState(); renderBrands(); 
+            if(currentUserRole === 'admin') showMonthsView(); else showGridView(); 
+            // Mobilde marka seçince menüyü kapat
+            if(window.innerWidth < 768) toggleSidebar();
+        }
         
         function addNewBrand() {
             const name = prompt("Marka Adı:"); if(!name) return;
@@ -339,19 +388,19 @@
             let html = state.months.map(m => {
                 const count = state.contents.filter(c => c.brandId === state.activeBrandId && c.month === m).length;
                 return `
-                <div class="bg-white border border-slate-200 p-10 rounded-[50px] flex flex-col justify-between h-[360px] shadow-sm hover:shadow-2xl transition-all relative group">
-                    ${currentUserRole === 'admin' ? `<button onclick="deleteMonth('${m}')" class="absolute top-8 right-8 w-10 h-10 rounded-full bg-slate-50 text-slate-300 hover:text-red-500 hover:bg-red-50 transition-all opacity-0 group-hover:opacity-100 flex items-center justify-center shadow-sm" title="Bu Ayı Sil"><i class="fas fa-trash-alt"></i></button>` : ''}
+                <div class="bg-white border border-slate-200 p-8 md:p-10 rounded-[40px] md:rounded-[50px] flex flex-col justify-between h-[320px] md:h-[360px] shadow-sm hover:shadow-2xl transition-all relative group">
+                    ${currentUserRole === 'admin' ? `<button onclick="deleteMonth('${m}')" class="absolute top-6 right-6 w-10 h-10 rounded-full bg-slate-50 text-slate-300 hover:text-red-500 hover:bg-red-50 transition-all opacity-100 md:opacity-0 group-hover:opacity-100 flex items-center justify-center shadow-sm" title="Bu Ayı Sil"><i class="fas fa-trash-alt"></i></button>` : ''}
                     <div>
-                        <div class="flex items-center gap-4 mb-10 text-slate-900"><i class="fas fa-calendar-alt text-hidYellow text-2xl"></i><h3 class="text-2xl font-black italic uppercase">${m}</h3></div>
-                        <div class="grid grid-cols-2 gap-6"><div class="p-6 bg-slate-50 rounded-3xl border border-slate-100 text-center"><p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1 italic">İçerik Adedi</p><p class="text-3xl font-black text-slate-900">${count}</p></div></div>
+                        <div class="flex items-center gap-4 mb-8 text-slate-900"><i class="fas fa-calendar-alt text-hidYellow text-2xl"></i><h3 class="text-xl md:text-2xl font-black italic uppercase">${m}</h3></div>
+                        <div class="grid grid-cols-2 gap-4 md:gap-6"><div class="p-5 md:p-6 bg-slate-50 rounded-2xl md:rounded-3xl border border-slate-100 text-center"><p class="text-[9px] md:text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1 italic">İçerik Adedi</p><p class="text-2xl md:text-3xl font-black text-slate-900">${count}</p></div></div>
                     </div>
-                    <button onclick="showFlowView('${m}')" class="w-full py-5 bg-hidYellow text-black font-black rounded-3xl uppercase text-[11px] tracking-widest shadow-lg">DETAYI GÖR</button>
+                    <button onclick="showFlowView('${m}')" class="w-full py-4 md:py-5 bg-hidYellow text-black font-black rounded-2xl md:rounded-3xl uppercase text-[10px] md:text-[11px] tracking-widest shadow-lg">DETAYI GÖR</button>
                 </div>
                 `;
             }).join('');
 
             if(currentUserRole === 'admin') {
-                html += `<button onclick="addNewMonth()" class="bg-slate-50 border-2 border-dashed border-slate-300 p-10 rounded-[50px] flex flex-col items-center justify-center h-[360px] text-slate-400 hover:text-hidYellow hover:border-hidYellow hover:bg-white transition-all group shadow-sm"><i class="fas fa-plus-circle text-5xl mb-4 group-hover:scale-110 transition-transform"></i><span class="font-black text-sm uppercase tracking-widest italic">YENİ AY EKLE</span></button>`;
+                html += `<button onclick="addNewMonth()" class="bg-slate-50 border-2 border-dashed border-slate-300 p-8 md:p-10 rounded-[40px] md:rounded-[50px] flex flex-col items-center justify-center h-[320px] md:h-[360px] text-slate-400 hover:text-hidYellow hover:border-hidYellow hover:bg-white transition-all group shadow-sm"><i class="fas fa-plus-circle text-4xl md:text-5xl mb-4 group-hover:scale-110 transition-transform"></i><span class="font-black text-xs md:text-sm uppercase tracking-widest italic">YENİ AY EKLE</span></button>`;
             }
             container.innerHTML = html;
         }
@@ -373,8 +422,19 @@
             
             container.innerHTML = filtered.map((c, idx) => `
                 <div class="pinpe-card">
-                    <div class="pinpe-header"><div class="flex items-center gap-6"><span class="bg-black text-white px-5 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-wider italic">İçerik ${idx+1} | ${c.tag}</span><span class="text-[12px] font-bold text-slate-400 italic">${c.date}</span></div></div>
-                    <div class="pinpe-body"><div class="w-1/3 flex flex-col"><div class="aspect-[4/5] bg-slate-50 rounded-[30px] overflow-hidden border border-slate-200 shadow-inner"><img src="${c.image}" class="w-full h-full object-cover"></div></div><div class="flex-1 flex flex-col gap-8"><div><label class="text-[11px] font-black text-slate-400 uppercase tracking-widest mb-3 block italic">Alt Metin</label><textarea class="h-24" readonly>${c.alt || ''}</textarea></div><div class="grid grid-cols-2 gap-8"><div><label class="text-[11px] font-black text-slate-400 uppercase tracking-widest mb-3 block italic">Görsel Metni</label><textarea class="h-48" readonly>${c.caption || ''}</textarea></div><div><label class="text-[11px] font-black text-slate-400 uppercase tracking-widest mb-3 block italic">Tasarımcı Notu</label><textarea class="h-48 italic text-slate-400 font-medium" readonly>${c.note || ''}</textarea></div></div></div></div>
+                    <div class="pinpe-header"><div class="flex items-center gap-4 md:gap-6"><span class="bg-black text-white px-4 md:px-5 py-2 md:py-2.5 rounded-lg md:rounded-xl text-[9px] md:text-[10px] font-black uppercase tracking-wider italic">İçerik ${idx+1} | ${c.tag}</span><span class="text-[10px] md:text-[12px] font-bold text-slate-400 italic">${c.date}</span></div></div>
+                    <div class="pinpe-body">
+                        <div class="w-full md:w-1/3 flex flex-col">
+                            <div class="aspect-[4/5] bg-slate-50 rounded-[20px] md:rounded-[30px] overflow-hidden border border-slate-200 shadow-inner"><img src="${c.image}" class="w-full h-full object-cover"></div>
+                        </div>
+                        <div class="flex-1 flex flex-col gap-6 md:gap-8">
+                            <div><label class="text-[10px] md:text-[11px] font-black text-slate-400 uppercase tracking-widest mb-2 md:mb-3 block italic">Alt Metin</label><textarea class="h-20 md:h-24" readonly>${c.alt || ''}</textarea></div>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
+                                <div><label class="text-[10px] md:text-[11px] font-black text-slate-400 uppercase tracking-widest mb-2 md:mb-3 block italic">Görsel Metni</label><textarea class="h-32 md:h-48" readonly>${c.caption || ''}</textarea></div>
+                                <div><label class="text-[10px] md:text-[11px] font-black text-slate-400 uppercase tracking-widest mb-2 md:mb-3 block italic">Tasarımcı Notu</label><textarea class="h-32 md:h-48 italic text-slate-400 font-medium" readonly>${c.note || ''}</textarea></div>
+                            </div>
+                        </div>
+                    </div>
                     <div class="pinpe-footer"><div class="flex gap-2 ml-auto"><button onclick="deleteContent(${c.id}, '${month}')" class="action-btn bg-pinpeRed text-white"><i class="fas fa-trash-alt mr-2"></i> İçeriği Sil</button></div></div>
                 </div>
             `).join('');
@@ -393,13 +453,13 @@
             grid.innerHTML = filtered.map(c => `
                 <div class="aspect-square bg-slate-100 border-[0.5px] border-slate-200 overflow-hidden relative group">
                     <img src="${c.image}" class="w-full h-full object-cover">
-                    ${currentUserRole === 'customer' ? `<div class="absolute inset-0 bg-black/70 opacity-0 group-hover:opacity-100 transition-all flex items-center justify-center p-2 text-center"><button onclick="requestRevision(${c.id})" class="bg-hidYellow text-black text-[10px] font-black py-3 px-4 rounded-xl uppercase shadow-lg hover:scale-105 transition-transform"><i class="fas fa-comment-dots mr-2"></i>Revize İste</button></div>` : ''}
+                    ${currentUserRole === 'customer' ? `<div class="absolute inset-0 bg-black/70 opacity-0 md:group-hover:opacity-100 transition-all flex items-center justify-center p-2 text-center" onclick="requestRevision(${c.id})"><button class="bg-hidYellow text-black text-[9px] md:text-[10px] font-black py-2 md:py-3 px-3 md:px-4 rounded-lg md:rounded-xl uppercase shadow-lg hover:scale-105 transition-transform"><i class="fas fa-comment-dots mr-1 md:mr-2"></i>Revize</button></div>` : ''}
                 </div>
             `).join('');
             for(let i=filtered.length; i<12; i++) grid.innerHTML += `<div class="aspect-square bg-slate-50"></div>`;
         }
 
-        // --- YENİ: REVİZELER EKRANI (SADECE ADMİN) ---
+        // --- REVİZELER ---
         function showRevisionsView() {
             if(currentUserRole !== 'admin') return;
             hideAll(); document.getElementById('viewRevisions').classList.remove('hidden');
@@ -410,22 +470,22 @@
         function renderRevisions() {
             const container = document.getElementById('revisionsContainer');
             if(!state.revisions || state.revisions.length === 0) {
-                container.innerHTML = `<div class="col-span-full p-12 text-center text-slate-400 font-bold italic border-2 border-dashed border-slate-200 rounded-3xl">Şu an bekleyen hiçbir revize talebi bulunmuyor. 🎉</div>`;
+                container.innerHTML = `<div class="col-span-full p-8 md:p-12 text-center text-slate-400 font-bold italic border-2 border-dashed border-slate-200 rounded-3xl text-sm md:text-base">Şu an bekleyen hiçbir revize talebi bulunmuyor. 🎉</div>`;
                 return;
             }
             
             container.innerHTML = state.revisions.map(rev => `
-                <div class="bg-white p-6 rounded-3xl shadow-sm border border-slate-200 flex gap-6 hover:shadow-md transition-all">
-                    <img src="${rev.image}" class="w-28 h-28 object-cover rounded-xl border border-slate-100">
+                <div class="bg-white p-5 md:p-6 rounded-2xl md:rounded-3xl shadow-sm border border-slate-200 flex flex-col md:flex-row gap-4 md:gap-6 hover:shadow-md transition-all">
+                    <img src="${rev.image}" class="w-full h-48 md:w-28 md:h-28 object-cover rounded-xl border border-slate-100">
                     <div class="flex-1 flex flex-col justify-between">
                         <div>
                             <div class="flex justify-between items-start mb-3">
-                                <span class="text-[10px] font-black uppercase tracking-widest text-hidYellow bg-slate-900 px-3 py-1.5 rounded-lg italic">${rev.brandName}</span>
-                                <span class="text-[10px] font-bold text-slate-400"><i class="far fa-clock mr-1"></i> ${rev.date}</span>
+                                <span class="text-[9px] md:text-[10px] font-black uppercase tracking-widest text-hidYellow bg-slate-900 px-3 py-1.5 rounded-lg italic">${rev.brandName}</span>
+                                <span class="text-[9px] md:text-[10px] font-bold text-slate-400"><i class="far fa-clock mr-1"></i> ${rev.date}</span>
                             </div>
-                            <p class="text-sm font-medium text-slate-700 italic border-l-4 border-hidYellow pl-3 leading-relaxed">"${rev.note}"</p>
+                            <p class="text-xs md:text-sm font-medium text-slate-700 italic border-l-4 border-hidYellow pl-3 leading-relaxed">"${rev.note}"</p>
                         </div>
-                        <button onclick="deleteRevision(${rev.id})" class="mt-4 text-[10px] font-black uppercase tracking-widest text-pinpeGreen hover:text-green-700 hover:bg-green-50 w-max px-4 py-2 rounded-lg transition-all flex items-center gap-2 self-end">
+                        <button onclick="deleteRevision(${rev.id})" class="mt-4 text-[9px] md:text-[10px] font-black uppercase tracking-widest text-pinpeGreen hover:text-green-700 hover:bg-green-50 w-full md:w-max px-4 py-3 md:py-2 rounded-lg transition-all flex items-center justify-center md:justify-start gap-2 self-end border border-green-100 md:border-none">
                             <i class="fas fa-check-circle text-sm"></i> Tamamlandı / Sil
                         </button>
                     </div>
@@ -440,13 +500,7 @@
                 const brand = state.brands.find(b => b.id === content.brandId);
                 
                 state.revisions.unshift({
-                    id: Date.now(),
-                    contentId: contentId,
-                    brandId: brand.id,
-                    brandName: brand.name,
-                    note: note,
-                    date: new Date().toLocaleDateString('tr-TR'),
-                    image: content.image
+                    id: Date.now(), contentId: contentId, brandId: brand.id, brandName: brand.name, note: note, date: new Date().toLocaleDateString('tr-TR'), image: content.image
                 });
                 
                 saveState();
@@ -454,10 +508,7 @@
             }
         }
 
-        function deleteRevision(id) {
-            state.revisions = state.revisions.filter(r => r.id !== id);
-            saveState(); renderRevisions(); updateRevisionBadge();
-        }
+        function deleteRevision(id) { state.revisions = state.revisions.filter(r => r.id !== id); saveState(); renderRevisions(); updateRevisionBadge(); }
 
         function updateRevisionBadge() {
             const badge = document.getElementById('rev-badge');
@@ -466,9 +517,7 @@
             if(state.revisions && state.revisions.length > 0) {
                 badge.innerText = state.revisions.length;
                 badge.classList.remove('hidden');
-            } else {
-                badge.classList.add('hidden');
-            }
+            } else { badge.classList.add('hidden'); }
         }
 
         // --- YARDIMCI FONKSİYONLAR ---
